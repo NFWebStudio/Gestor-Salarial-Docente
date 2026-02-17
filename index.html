@@ -62,12 +62,6 @@
       -webkit-text-fill-color: transparent;
     }
 
-    p.subtitle {
-      color: var(--text-dim);
-      margin-top: 8px;
-      font-size: 0.95rem;
-    }
-
     .form-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -76,7 +70,6 @@
 
     @media (max-width: 768px) {
       .form-grid { grid-template-columns: 1fr; }
-      .calculator-container { padding: 25px; }
     }
 
     .form-group {
@@ -87,11 +80,6 @@
       border-radius: 16px;
       border: 1px solid transparent;
       transition: all 0.2s ease;
-    }
-
-    .form-group:focus-within {
-      background: rgba(255, 255, 255, 0.05);
-      border-color: rgba(129, 140, 248, 0.4);
     }
 
     label {
@@ -110,7 +98,6 @@
       padding: 12px;
       color: white;
       font-size: 0.95rem;
-      transition: all 0.2s ease;
       appearance: none; 
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
       background-repeat: no-repeat;
@@ -118,20 +105,12 @@
       background-size: 16px;
     }
 
-    input[type="number"] { background-image: none; }
-
-    select:focus, input:focus {
-      outline: none;
-      border-color: var(--primary);
-      background-color: #26334d;
-    }
-
     .info {
       font-size: 0.8rem;
       color: var(--secondary);
       margin-top: 8px;
       font-weight: 600;
-      height: 1.2rem;
+      min-height: 1.2rem;
     }
 
     .actions {
@@ -149,79 +128,34 @@
       padding: 18px;
       font-size: 1rem;
       font-weight: 700;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: all 0.3s ease;
     }
 
     .btn-primary {
       background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
       color: white;
-      box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.4);
     }
-
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 15px 25px -5px rgba(99, 102, 241, 0.5);
-      filter: brightness(1.1);
-    }
-
-    .btn-primary:active { transform: translateY(0); }
 
     #dividirBtn {
       background: rgba(16, 185, 129, 0.1);
       border: 2px solid var(--secondary);
       color: var(--secondary);
       display: none;
-      animation: fadeIn 0.5s ease forwards;
-    }
-
-    #dividirBtn:hover {
-      background: var(--secondary);
-      color: var(--bg-dark);
     }
 
     .result-card {
       margin-top: 30px;
       padding: 30px;
-      background: linear-gradient(145deg, rgba(16, 185, 129, 0.15), rgba(16, 185, 129, 0.05));
-      border: 1px solid rgba(16, 185, 129, 0.3);
+      background: rgba(16, 185, 129, 0.1);
       border-radius: 24px;
       text-align: center;
-      animation: slideUp 0.4s ease-out;
-    }
-
-    .result-label {
-      font-size: 0.9rem;
-      color: var(--text-dim);
-      text-transform: uppercase;
-      margin-bottom: 5px;
     }
 
     .result-value {
       font-size: 2.2rem;
       font-weight: 800;
       color: var(--secondary);
-      margin: 0;
-      text-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
     }
-
-    .monthly-sub {
-      display: block;
-      margin-top: 10px;
-      font-size: 1.1rem;
-      color: var(--text-dim);
-    }
-
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    @keyframes slideUp { 
-      from { opacity: 0; transform: translateY(20px); } 
-      to { opacity: 1; transform: translateY(0); } 
-    }
-
-    #multiplicadorContainer { display: none; }
   </style>
 </head>
 <body>
@@ -229,7 +163,6 @@
 <div class="calculator-container">
   <header>
     <h1>Gestor Salarial Docente</h1>
-    <p class="subtitle"></p>
   </header>
 
   <div class="form-grid">
@@ -246,38 +179,35 @@
 
     <div class="form-group">
       <label>Mes</label>
-      <select id="mes" disabled onchange="mostrarBase()"></select>
+      <select id="mes" disabled onchange="actualizarTodo()"></select>
     </div>
 
     <div class="form-group">
       <label>Índice de cargo básico</label>
-      <select id="indice" onchange="mostrarBase(); mostrarMultiplicador();">
+      <select id="indice" onchange="mostrarMultiplicador(); actualizarTodo();">
         <option value="">Seleccione índice</option>
       </select>
       <div class="info" id="valorBase"></div>
     </div>
 
-    <div class="form-group" id="multiplicadorContainer">
+    <div class="form-group" id="multiplicadorContainer" style="display:none">
       <label>Factor de Multiplicación</label>
-      <select id="factorMultiplicacion" onchange="mostrarBase()">
-        <option value="">Seleccione factor</option>
+      <select id="factorMultiplicacion" onchange="actualizarTodo()">
         <script>
-          for (let i = 1; i <= 20; i++) {
-            document.write(`<option value="${i}">x${i}</option>`);
-          }
+          for (let i = 1; i <= 20; i++) document.write(`<option value="${i}">x${i}</option>`);
         </script>
       </select>
     </div>
 
     <div class="form-group">
       <label>Antigüedad (Años)</label>
-      <input type="number" id="antiguedad" placeholder="Ej: 5" onchange="mostrarAntiguedad()" />
+      <input type="number" id="antiguedad" placeholder="Ej: 5" onchange="actualizarTodo()" />
       <div class="info" id="valorAntiguedad"></div>
     </div>
 
     <div class="form-group">
       <label>Ruralidad</label>
-      <select id="ruralidad" onchange="mostrarRuralidad()">
+      <select id="ruralidad" onchange="actualizarTodo()">
         <option value="">Ninguna</option>
         <option value="R1">R1 (30%)</option>
         <option value="R2">R2 (60%)</option>
@@ -290,7 +220,7 @@
 
     <div class="form-group">
       <label>Plus de Enseñanza</label>
-      <select id="plus" onchange="mostrarPlus()">
+      <select id="plus" onchange="actualizarTodo()">
         <option value="">Sin Plus</option>
         <option value="0623-Preescolar">0623 - Preescolar</option>
         <option value="0623-Psicología">0623 - Psicología</option>
@@ -303,7 +233,7 @@
 
     <div class="form-group">
       <label>Bonificación de Cargo</label>
-      <select id="bonificacion" onchange="mostrarBonificacion()">
+      <select id="bonificacion" onchange="actualizarTodo()">
         <option value="">Sin Bonificación</option>
         <option value="0653">0653 - Bonif PR Media</option>
         <option value="06631">0663 - Jefe PR/Sub Jefe Media</option>
@@ -317,33 +247,45 @@
       <div class="info" id="valorBonificacion"></div>
     </div>
 
-    <div class="form-group" style="grid-column: 1 / -1;">
-      <label>Código Adicional</label>
-      <select id="codigo" onchange="mostrarCodigo()">
-        <option value="">Seleccione código</option>
-        <option value="33%">Bonificación 33%</option>
-        <option value="54%">Bonificación 54%</option>
-        <option value="37%">Bonificación 37%</option>
-        <option value="20%">Bonificación 20%</option>
-        <option value="X índice">Bonificación X índice</option>
+    <div class="form-group">
+      <label>Bonificación 455</label>
+      <select id="codigo455" onchange="actualizarTodo()">
+        <option value="">No aplicar</option>
+        <option value="455">Aplicar 455</option>
       </select>
-      <div class="info" id="valorCodigo"></div>
+      <div class="info" id="valor455"></div>
+    </div>
+
+    <div class="form-group">
+      <label>Bonificación 667</label>
+      <select id="codigo667" onchange="actualizarTodo()">
+        <option value="">No aplicar</option>
+        <option value="667">Aplicar 667</option>
+      </select>
+      <div class="info" id="valor667"></div>
+    </div>
+
+    <div class="form-group" style="grid-column: 1 / -1;">
+      <label>Código Adicional (Porcentajes / X Índice)</label>
+      <select id="codigoGral" onchange="actualizarTodo()">
+        <option value="">Ninguno</option>
+        <option value="33%">33%</option>
+        <option value="54%">54%</option>
+        <option value="37%">37%</option>
+        <option value="20%">20%</option>
+        <option value="X índice">X índice</option>
+      </select>
+      <div class="info" id="valorCodigoGral"></div>
     </div>
 
     <div class="actions">
-      <button class="btn-primary" onclick="calcular()">
-        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
-         𝙲𝙰𝙻𝙲𝚄𝙻𝙰𝚁 𝙻𝙸𝚀𝚄𝙸𝙳𝙰𝙲𝙸𝙾𝙽
-      </button>
-      <button id="dividirBtn" onclick="dividirPor12()">
-        𝚅𝙴𝚁 𝙿𝚁𝙾𝙼𝙴𝙳𝙸𝙾 𝙼𝙴𝙽𝚂𝚄𝙰𝙻
-      </button>
+      <button class="btn-primary" onclick="calcular()">𝙲𝙰𝙻𝙲𝚄𝙻𝙰𝚁 𝙻𝙸𝚀𝚄𝙸𝙳𝙰𝙲𝙸𝙾𝙽</button>
+      <button id="dividirBtn" onclick="dividirPor12()">𝚅𝙴𝚁 𝙿𝚁𝙾𝙼𝙴𝙳𝙸𝙾 𝙼𝙴𝙽𝚂𝚄𝙰𝙻</button>
     </div>
   </div>
 
   <div id="resultContainer" style="display: none;">
     <div class="result-card">
-      <div class="result-label">𝐒𝐔𝐄𝐋𝐃𝐎 𝐄𝐒𝐓𝐈𝐌𝐀𝐃𝐎</div>
       <div id="resultado" class="result-value"></div>
     </div>
   </div>
@@ -364,16 +306,15 @@
     "1.18": { "2023-01": 53272.28, "2023-02":53272.28, "2023-03": 62327.60, "2023-04": 62327.60, "2023-05": 74583.08, "2023-06": 74583.08, "2023-07": 90562.64, "2023-08": 90562.64, "2023-09": 103880.12, "2023-10": 103880.12, "2023-11": 115599.88, "2023-12": 115599.88, "2024-01": 144498.08, "2024-02": 171085.84, "2024-03": 189297.96, "2024-04": 204253.28, "2024-05": 216053.28, "2024-06": 216053.28, "2024-07": 230213.28, "2024-08": 239889.28, "2024-09": 250509.28, "2024-10": 261528.12, "2024-11": 272870.28, "2024-12": 272870.28, "2025-01": 272870.28, "2025-02": 291970.94, "2025-03": 297518.12, "2025-04": 297518.12, "2025-05": 315369.16, "2025-06": 315369.16, "2025-07": 327269.46, "2025-08": 335451.58, "2025-09": 335451.58, "2025-10": 343633.70, "2025-11":  343633.70, "2025-12": 347069.86, "2026-01": 353942.18, "2026-02": 359096.42 },
   };
 
-  const antiguedadCoef = {
-    "0": 0.21, "1": 0.21, "2": 0.24, "3": 0.24, "4": 0.33, "5": 0.33, "6": 0.33,
-    "7": 0.43, "8": 0.43, "9": 0.43, "10": 0.54, "11": 0.54, "12": 0.64,
-    "13": 0.64, "14": 0.64, "15": 0.74, "16": 0.74, "17": 0.84, "18": 0.84,
-    "19": 0.84, "20": 1.05, "21": 1.05, "22": 1.15, "23": 1.15, "24": 1.25
+  const topesMensuales = {
+    "455": { "2023-01": 40.428, "2023-02":40.428, "2023-03": 47.908, "2023-04": 47.908, "2023-05": 59.402, "2023-06": 59.402, "2023-07": 79.880, "2023-08": 79.880, "2023-09": 97.626, "2023-10": 97.626, "2023-11": 113.534, "2023-12": 113.534, "2024-01": 141.918, "2024-02": 168.030, "2024-03": 184.596, "2024-04": 184.596, "2024-05": 181.596, "2024-06": 181.596, "2024-07": 186.596, "2024-08": 194.596, "2024-09": 194.596, "2024-10": 191.258, "2024-11": 187.646, "2024-12": 187.646, "2025-01": 187.646, "2025-02": 200.782, "2025-03": 204.596, "2025-04": 204.596, "2025-05": 216.872, "2025-06": 216.872, "2025-07": 225.056, "2025-08": 230.682, "2025-09": 230.682, "2025-10": 236.308, "2025-11":  236.308, "2025-12": 238.672, "2026-01": 243.398, "2026-02": 246.944 },
+    "667": { "2023-01": 28893.44, "2023-02":28893.44, "2023-03": 33804.8, "2023-04": 33804.8, "2023-05": 40451.84, "2023-06": 40451.84, "2023-07": 49118.72, "2023-08": 49118.72, "2023-09": 56341.76, "2023-10": 56341.76, "2023-11": 62698.24, "2023-12": 62698.24, "2024-01": 78371.84, "2024-02": 92792.32, "2024-03": 102670.08, "2024-04": 110781.44, "2024-05": 121392.648, "2024-06": 121392.648, "2024-07": 145931.808, "2024-08": 152065.41, "2024-09": 163043.33, "2024-10": 172652.89, "2024-11": 182684.34, "2024-12": 182684.34, "2025-01": 182684.34, "2025-02": 195472.07, "2025-03": 199185.86, "2025-04": 199185.86, "2025-05": 211136.98, "2025-06": 211136.98, "2025-07": 219104.14, "2025-08": 224.582, "2025-09": 224.582, "2025-10": 230059.85, "2025-11":  230059.85, "2025-12": 232360.33, "2026-01": 236961.29, "2026-02": 240412.01 }
   };
 
+  const antiguedadCoef = { "0": 0.21, "5": 0.33, "10": 0.54, "20": 1.05, "24": 1.25 };
   const ruralidadCoef = { "R1": 0.30, "R2": 0.60, "R3": 0.90, "R4": 1.00, "R5": 1.20 };
-  const plusEnsenanza = { "0623-Preescolar": 0.67, "0623-Psicología": 0.74, "0640-Especial": 0.20, "0623-Especial": 0.78, "0641-Primaria": 0.67 };
-  const bonificaciones = { "0653": 0.82, "06632": 0.82, "06634": 0.73, "06636": 0.82, "06631": 0.82, "06633": 0.73, "06635": 0.73, "06637": 0.82 };
+  const plusEnsenanza = { "0623-Preescolar": 0.67, "0640-Especial": 0.20, "0641-Primaria": 0.67 };
+  const bonificaciones = { "0653": 0.82, "06631": 0.82 };
 
   const indiceSelect = document.getElementById("indice");
   const mesSelect = document.getElementById("mes");
@@ -392,8 +333,7 @@
     const meses = Object.keys(sueldos["1.1"]).filter(m => m.startsWith(anio));
     meses.forEach(mes => {
       const option = document.createElement("option");
-      option.value = mes;
-      option.textContent = mes;
+      option.value = mes; option.textContent = mes;
       mesSelect.appendChild(option);
     });
     mesSelect.disabled = false;
@@ -404,99 +344,78 @@
     const mes = mesSelect.value;
     const multiplicador = parseInt(document.getElementById("factorMultiplicacion").value) || 1;
     if (!indice || !mes) return 0;
-    const especiales = ["15", "18", "12", "14", "10", "8"];
-    let base = sueldos[indice]?.[mes] ?? 0;
-    if (especiales.includes(indice)) {
-      const baseIndice1 = sueldos["1"]?.[mes];
-      base = baseIndice1 ? baseIndice1 / parseFloat(indice) : 0;
-    }
+    let base = sueldos[indice]?.[mes] || (sueldos["1"]?.[mes] / parseFloat(indice)) || 0;
     return base * multiplicador;
   }
 
-  function mostrarBase() {
+  function actualizarTodo() {
     const base = getBase();
-    document.getElementById("valorBase").textContent = base ? `Base: $${base.toLocaleString('es-AR', {minimumFractionDigits: 2})}` : "";
-  }
+    const mes = mesSelect.value;
+    const indNum = parseFloat(indiceSelect.value) || 1;
 
-  function mostrarAntiguedad() {
-    let antig = parseInt(document.getElementById("antiguedad").value);
-    if (isNaN(antig) || antig < 0) antig = 0; if (antig > 24) antig = 24;
-    const coef = antiguedadCoef[antig] ?? 0;
-    const adicional = getBase() * coef;
-    document.getElementById("valorAntiguedad").textContent = `+ $${adicional.toLocaleString('es-AR')} (${(coef*100).toFixed(0)}%)`;
-  }
+    document.getElementById("valorBase").textContent = base ? `Base: $${base.toLocaleString('es-AR')}` : "";
 
-  function mostrarRuralidad() {
-    const coef = ruralidadCoef[document.getElementById("ruralidad").value] ?? 0;
-    const adicional = getBase() * coef;
-    document.getElementById("valorRuralidad").textContent = `+ $${adicional.toLocaleString('es-AR')} (${(coef*100).toFixed(0)}%)`;
-  }
+    // 455
+    const tope455 = topesMensuales["455"]?.[mes] || 0;
+    const v455 = document.getElementById("codigo455").value === "455" ? (tope455/2)/indNum : 0;
+    document.getElementById("valor455").textContent = v455 ? `+ $${v455.toLocaleString('es-AR')}` : "";
 
-  function mostrarPlus() {
-    const coef = plusEnsenanza[document.getElementById("plus").value] ?? 0;
-    const adicional = getBase() * coef;
-    document.getElementById("valorPlus").textContent = `+ $${adicional.toLocaleString('es-AR')} (${(coef*100).toFixed(0)}%)`;
-  }
+    // 667
+    const tope667 = topesMensuales["667"]?.[mes] || 0;
+    const v667 = document.getElementById("codigo667").value === "667" ? (tope667/2)/indNum : 0;
+    document.getElementById("valor667").textContent = v667 ? `+ $${v667.toLocaleString('es-AR')}` : "";
 
-  function mostrarBonificacion() {
-    const coef = bonificaciones[document.getElementById("bonificacion").value] ?? 0;
-    const adicional = getBase() * coef;
-    document.getElementById("valorBonificacion").textContent = `+ $${adicional.toLocaleString('es-AR')} (${(coef*100).toFixed(0)}%)`;
-  }
-
-  function mostrarCodigo() {
-    const codigo = document.getElementById("codigo").value;
-    const base = getBase();
-    let adicional = 0;
-    let texto = "";
-    if (codigo.endsWith("%")) {
-      const porcentaje = parseFloat(codigo) / 100;
-      adicional = base * porcentaje;
-      texto = `+ $${adicional.toLocaleString('es-AR')} (${(porcentaje*100).toFixed(0)}%)`;
-    } else if (codigo === "X índice") {
-      adicional = base;
-      texto = `+ $${adicional.toLocaleString('es-AR')} (100%)`;
-    }
-    document.getElementById("valorCodigo").textContent = texto;
+    // Código General (Porcentajes)
+    const codGral = document.getElementById("codigoGral").value;
+    let vGral = 0;
+    if(codGral.endsWith("%")) vGral = base * (parseFloat(codGral)/100);
+    else if(codGral === "X índice") vGral = base;
+    document.getElementById("valorCodigoGral").textContent = vGral ? `+ $${vGral.toLocaleString('es-AR')}` : "";
   }
 
   function mostrarMultiplicador() {
-    const indice = document.getElementById("indice").value;
-    const div = document.getElementById("multiplicadorContainer");
     const especiales = ["15", "18", "12", "14", "10", "8"];
-    div.style.display = especiales.includes(indice) ? 'flex' : 'none';
+    document.getElementById("multiplicadorContainer").style.display = especiales.includes(indiceSelect.value) ? 'flex' : 'none';
   }
 
   function calcular() {
     const base = getBase();
-    if (base === 0) return alert("Por favor seleccione Año, Mes e Índice");
+    if (base === 0) return alert("Seleccione datos válidos");
 
-    let antig = Math.min(Math.max(parseInt(document.getElementById("antiguedad").value) || 0, 0), 24);
-    const total = base * (1 + 
-      (antiguedadCoef[antig] || 0) + 
-      (ruralidadCoef[document.getElementById("ruralidad").value] || 0) + 
-      (plusEnsenanza[document.getElementById("plus").value] || 0) + 
-      (bonificaciones[document.getElementById("bonificacion").value] || 0) + 
-      (document.getElementById("codigo").value.endsWith("%") ? parseFloat(document.getElementById("codigo").value)/100 : (document.getElementById("codigo").value === "X índice" ? 1 : 0))
-    );
+    const mes = mesSelect.value;
+    const indNum = parseFloat(indiceSelect.value) || 1;
+    
+    // Sumar adicionales por tope
+    const v455 = document.getElementById("codigo455").value === "455" ? (topesMensuales["455"]?.[mes] || 0)/2/indNum : 0;
+    const v667 = document.getElementById("codigo667").value === "667" ? (topesMensuales["667"]?.[mes] || 0)/2/indNum : 0;
+    
+    // Sumar adicional por porcentaje
+    const codGral = document.getElementById("codigoGral").value;
+    let vGral = 0;
+    if(codGral.endsWith("%")) vGral = base * (parseFloat(codGral)/100);
+    else if(codGral === "X índice") vGral = base;
+
+    const antig = parseInt(document.getElementById("antiguedad").value) || 0;
+    const rural = ruralidadCoef[document.getElementById("ruralidad").value] || 0;
+    const plus = plusEnsenanza[document.getElementById("plus").value] || 0;
+    const bonif = bonificaciones[document.getElementById("bonificacion").value] || 0;
+
+    // Obtener coeficiente antigüedad (buscando el más cercano hacia abajo)
+    let aCoef = 0;
+    Object.keys(antiguedadCoef).sort((a,b)=>b-a).forEach(k => { if(antig >= k && aCoef === 0) aCoef = antiguedadCoef[k]; });
+
+    const total = (base * (1 + aCoef + rural + plus + bonif)) + v455 + v667 + vGral;
 
     document.getElementById("resultContainer").style.display = "block";
     document.getElementById("resultado").textContent = `$${total.toLocaleString('es-AR', {minimumFractionDigits: 2})}`;
-    document.getElementById("dividirBtn").style.display = "flex";
     window.lastTotal = total;
-
-    document.getElementById("resultContainer").scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    document.getElementById("dividirBtn").style.display = "flex";
   }
 
   function dividirPor12() {
     const mensual = window.lastTotal / 12;
-    document.getElementById("resultado").innerHTML = `
-      $${window.lastTotal.toLocaleString('es-AR', {minimumFractionDigits: 2})}
-      <span class="monthly-sub">Promedio Mensual: $${mensual.toLocaleString('es-AR', {minimumFractionDigits: 2})}</span>
-    `;
-    document.getElementById("dividirBtn").style.display = "none";
+    document.getElementById("resultado").innerHTML = `$${window.lastTotal.toLocaleString('es-AR')} <br><small>Promedio: $${mensual.toLocaleString('es-AR')}</small>`;
   }
 </script>
-
 </body>
 </html>
